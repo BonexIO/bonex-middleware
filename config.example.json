@@ -1,0 +1,17 @@
+{
+  "LogLevel": "debug",
+  "Api": {
+    "Port": 9000,
+    "AllowedOrigins": [
+      "http://localhost:8081",
+    ]
+  },
+  "Mysql": {
+    "Host": "127.0.0.1",
+    "Port": 3306,
+    "User": "root",
+    "Password": "root",
+    "Database": "bonex-middleware",
+    "DebugMode": true
+  }
+}

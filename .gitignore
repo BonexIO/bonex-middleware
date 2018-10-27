@@ -1,0 +1,9 @@
+.idea
+glow
+glow.deploy.yaml
+.secrets/
+.env
+config.json
+*deploy.yaml
+*log*.log
+vendor/**/
