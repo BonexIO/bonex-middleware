@@ -73,6 +73,12 @@ func (this *api) Run() error {
         {"/merchant/{address}", "GET", this.getMerchant, nil},
         {"/merchant", "POST", this.createMerchant, nil},
         {"/image/{address}", "GET", this.getImage, nil},
+
+        {"/subscribe", "POST", this.subscribe, nil},
+        {"/unsubscribe", "POST", this.unsubscribe, nil},
+
+        {"/subscriptions/{address}", "GET", this.getSubscriptions, nil},
+        {"/subscribers/{address}", "GET", this.getSubscribers, nil},
     })
 
     this.server = &http.Server{Addr: fmt.Sprintf(":%d", this.config.Api.Port), Handler: r}

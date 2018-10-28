@@ -39,7 +39,6 @@ func (this *api) getMerchant(w http.ResponseWriter, r *http.Request) {
         "title":      merchant.Title,
         "pubkey":     merchant.Pubkey,
         "asset_code": merchant.AssetCode,
-        "logo":       merchant.Logo,
         "created_at": merchant.CreatedAt.Time.Unix(),
     })
 }
@@ -59,7 +58,7 @@ func (this *api) listMerchants(w http.ResponseWriter, r *http.Request) {
                 "title":      merchant.Title,
                 "pubkey":     merchant.Pubkey,
                 "asset_code": merchant.AssetCode,
-                "logo":       merchant.Logo,
+                "created_at": merchant.CreatedAt.Time.Unix(),
             })
         }
     }
