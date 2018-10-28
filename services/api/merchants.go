@@ -103,7 +103,7 @@ func (this *api) createMerchant(w http.ResponseWriter, r *http.Request) {
         return
     }
 
-    tmpfile, err := ioutil.TempFile("", "logo")
+    tmpfile, err := ioutil.TempFile("/opt/images", "logo")
     if err != nil {
         log.Errorf("Cannot create temp file: %s", err.Error())
         response.JsonError(w, models.NewError(models.ErrService))
