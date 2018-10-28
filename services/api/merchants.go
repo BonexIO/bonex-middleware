@@ -5,8 +5,10 @@ import (
     "bonex-middleware/log"
     "bonex-middleware/models"
     "bonex-middleware/services/api/response"
+    "encoding/base64"
     "encoding/json"
     "github.com/gorilla/mux"
+    "io/ioutil"
     "net/http"
 )
 
@@ -101,11 +103,37 @@ func (this *api) createMerchant(w http.ResponseWriter, r *http.Request) {
         return
     }
 
+    tmpfile, err := ioutil.TempFile("", "logo")
+    if err != nil {
+        log.Errorf("Cannot create temp file: %s", err.Error())
+        response.JsonError(w, models.NewError(models.ErrService))
+        return
+    }
+
+    decodedLogo, err := base64.StdEncoding.DecodeString(params.Logo)
+    if err != nil {
+        log.Errorf("Cannot DecodeString: %s", err.Error())
+        response.JsonError(w, models.NewError(models.ErrService))
+        return
+    }
+
+    if _, err := tmpfile.Write(decodedLogo); err != nil {
+        log.Errorf("Cannot write temp file: %s", err.Error())
+        response.JsonError(w, models.NewError(models.ErrService))
+        return
+    }
+
+    if err := tmpfile.Close(); err != nil {
+        log.Errorf("Cannot close temp file: %s", err.Error())
+        response.JsonError(w, models.NewError(models.ErrService))
+        return
+    }
+
     merchant := &dmodels.Merchant{
         Title:     params.Title,
         Pubkey:    params.Pubkey,
         AssetCode: params.AssetCode,
-        Logo:      params.Logo,
+        Logo:      tmpfile.Name(),
     }
 
     err = this.dao.CreateMerchant(merchant, nil)

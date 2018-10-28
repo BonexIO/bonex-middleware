@@ -1,6 +1,6 @@
 .idea
-glow
-glow.deploy.yaml
+bonex-middleware
+bonex-middleware.deploy.yaml
 .secrets/
 .env
 config.json
