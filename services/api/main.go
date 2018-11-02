@@ -79,7 +79,7 @@ func (this *api) Run() error {
 
 		{"/subscriptions/{address}", "GET", this.getSubscriptions, nil},
 		{"/subscribers/{address}", "GET", this.getSubscribers, nil},
-		{"/transaction/", "POST", this.createTransaction, nil},
+		{"/transaction", "POST", this.createTransaction, nil},
 		{"/redeem", "POST", this.redeemTransaction, nil},
 	})
 

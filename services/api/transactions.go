@@ -23,7 +23,7 @@ func (this *api) createTransaction(w http.ResponseWriter, r *http.Request) {
 	var params reqParams
 	err := json.NewDecoder(r.Body).Decode(&params)
 	if err != nil {
-		response.JsonError(w, models.NewError(models.ErrBadRequest))
+		response.JsonError(w, models.NewError(models.ErrBadRequest, "failed to decode message"))
 		return
 	}
 
