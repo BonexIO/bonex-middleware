@@ -17,7 +17,7 @@ func (this *api) createTransaction(w http.ResponseWriter, r *http.Request) {
 		IssuerPubKey string `json:"pubkey"`
 		AssetCode    string `json:"asset_code"`
 		Secret       string `json:"secret"`
-		Amount       uint64 `json:"amount"`
+		Amount       string `json:"amount"`
 	}
 
 	var params reqParams
@@ -42,10 +42,19 @@ func (this *api) createTransaction(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	amount, err := strconv.ParseInt(params.Amount, 10, 64)
+
+	if err != nil || amount < 0 {
+		response.JsonError(w, models.NewError(models.ErrBadParam, "amount"))
+		return
+	}
+
+	amount64 := uint64(amount)
+
 	transaction := &dmodels.Transaction{
 		Pubkey:    params.IssuerPubKey,
 		AssetCode: params.AssetCode,
-		Amount:    params.Amount,
+		Amount:    amount64,
 		Secret:    params.Secret,
 	}
 

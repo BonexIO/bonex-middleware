@@ -15,6 +15,8 @@ func (this *mysqlDAO) CreateTransaction(tx *models.Transaction, dao dao.DAOTx) e
 	tx.Id, err = this.mysql.Insert(sq.Insert(models.TransactionsTable).SetMap(sq.Eq{
 		"mer_pubkey":     tx.Pubkey,
 		"mer_asset_code": tx.AssetCode,
+		"amount":         tx.Amount,
+		"secret":         tx.Secret,
 	}), this.daoTx2Sqlx(dao))
 
 	return err
