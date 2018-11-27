@@ -17,6 +17,7 @@ type (
 		Faucet   FaucetConfig
 
 		HorizonClientURL string
+		NetworkPassphrase string
 	}
 
 	baseConfig interface {

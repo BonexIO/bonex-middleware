@@ -14,14 +14,18 @@ import (
 
 type Stellar struct {
 	privateKey    string
-	horizonClient *horizon.Client
+	client *horizon.Client
+	network b.Network
 }
 
 func NewStellar(cfg *config.Config) Blockchain {
 	return &Stellar{
-		horizonClient: &horizon.Client{
+		client: &horizon.Client{
 			URL:  cfg.HorizonClientURL,
 			HTTP: http.DefaultClient,
+		},
+		network: b.Network{
+			cfg.NetworkPassphrase,
 		},
 	}
 }
@@ -35,8 +39,8 @@ func (this *Stellar) SendMoney(toAddress string, amount decimal.Decimal) error {
 
 	tx, err := b.Transaction(
 		b.SourceAccount{AddressOrSeed: this.privateKey},
-		b.TestNetwork,
-		b.AutoSequence{SequenceProvider: horizon.DefaultTestNetClient},
+		this.network,
+		b.AutoSequence{SequenceProvider: this.client},
 		b.Payment(
 			b.Destination{AddressOrSeed: toAddress},
 			b.NativeAmount{Amount: amount.String()},
@@ -56,20 +60,21 @@ func (this *Stellar) SendMoney(toAddress string, amount decimal.Decimal) error {
 		return err
 	}
 
-	resp, err := this.horizonClient.SubmitTransaction(xdr)
+	resp, err := this.client.SubmitTransaction(xdr)
 	if err != nil {
 		return err
 	}
 
-	log.Info("Transaction %s successfully submitted: %s", resp.Hash, resp.Result)
+	log.Infof("Transaction %s successfully submitted to network", resp.Hash)
 
 	return nil
 }
 
-func (this *Stellar) SetPrivateKey(string) error {
+func (this *Stellar) SetPrivateKey(pk string) error {
 	//var p [32]byte
 	//copy(p[:], privKeyBytes[0:32])
 	//kp, err := keypair.FromRawSeed(p)
+	this.privateKey = pk
 
 	kp, err := keypair.Parse(this.privateKey)
 	if err != nil {

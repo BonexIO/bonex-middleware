@@ -43,10 +43,12 @@ func main() {
 
     s := faucet.NewStellar(cfg)
     faucetModule := faucet.New(d, cfg, s)
+    err = faucetModule.PromtKey()
+    if err != nil {
+        log.Fatalf("Cannot promt necessary keys to run faucet: %s", err.Error())
+    }
 
     apiModule := api.New(d, cfg, faucetModule)
-
-
 
     runModules(apiModule, faucetModule)
 

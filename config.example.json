@@ -14,7 +14,12 @@
     "Database": "bonex-middleware",
     "DebugMode": true
   },
+  "Redis" : {
+    "Host": "localhost",
+    "Port": 6379
+  },
   "HorizonClientURL": "http://46.4.114.130:8000/",
+  "NetworkPassphrase": "Bonex Network ; October 2018",
   "Faucet": {
     "MaxAllowed24HoursValue": "100",
     "RunEverySeconds": 10

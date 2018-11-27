@@ -46,7 +46,7 @@ func (this *Faucet) GracefulStop(ctx context.Context) error {
 	return nil
 }
 
-func (this *Faucet) promtKey() error {
+func (this *Faucet) PromtKey() error {
 	//color.New(color.Bold, color.FgGreen).SprintFunc()(this.GetName()), color.New(color.FgBlue).SprintFunc()(msg)
 	fmt.Printf("Enter emission account private key: ")
 	privKeyBytes, err := terminal.ReadPassword(int(syscall.Stdin))
@@ -61,12 +61,10 @@ func (this *Faucet) promtKey() error {
 }
 
 func (this *Faucet) Run() error {
-	err := this.promtKey()
-	if err != nil {
-		return err
-	}
-
 	gocron.Every(this.config.Faucet.RunEverySeconds).Seconds().Do(this.Do)
+
+	//run scheduler
+	<-gocron.Start()
 
 	return nil
 }
@@ -133,7 +131,7 @@ func (this *Faucet) AddToQueue(qi *types.QueueItem, ipAddress string) error {
 	volume = volume.Add(amount)
 
 	if volume.GreaterThan(this.config.Faucet.MaxAllowed24HoursValue) {
-		return fmt.Errorf("daily limit reached")
+		return fmt.Errorf("daily limit %s reached on %s", this.config.Faucet.MaxAllowed24HoursValue.String(), volume.String())
 	}
 
 	err = this.dao.SetAccountVolume(ipAddress, volume, GreyListTTL)

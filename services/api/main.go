@@ -63,7 +63,7 @@ func (this *api) Run() error {
 
     wrapper := negroni.New()
     wrapper.Use(cors.New(cors.Options{
-        AllowedOrigins:   this.config.Api.AllowedOrigins,
+        AllowedOrigins:   []string{"*"},
         AllowCredentials: true,
         AllowedMethods:   []string{"POST", "GET", "OPTIONS", "PUT", "DELETE"},
         AllowedHeaders:   []string{"Accept", "Content-Type", "Content-Length", "Accept-Encoding", "X-CSRF-Token", "Authorization", "X-API-Key"},
@@ -83,7 +83,7 @@ func (this *api) Run() error {
         {"/subscriptions/{address}", "GET", this.getSubscriptions, nil},
         {"/subscribers/{address}", "GET", this.getSubscribers, nil},
 
-        {"/faucet/request", "GET", this.requestMoney, nil},
+        {"/faucet/request", "POST", this.requestMoney, nil},
     })
 
     this.server = &http.Server{Addr: fmt.Sprintf(":%d", this.config.Api.Port), Handler: r}

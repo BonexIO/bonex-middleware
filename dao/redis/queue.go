@@ -34,7 +34,7 @@ func (this *redisDAO) PopFromQueue() (*types.QueueItem, error) {
 
 	var qi types.QueueItem
 
-	err = json.Unmarshal(result, qi)
+	err = json.Unmarshal(result, &qi)
 	if err != nil {
 		return nil, err
 	}
