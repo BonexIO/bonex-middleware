@@ -2,15 +2,20 @@ package main
 
 import (
     "bonex-middleware/config"
-    dao "bonex-middleware/dao/mysql"
+    mdao "bonex-middleware/dao/mysql"
+    rdao "bonex-middleware/dao/redis"
+    "bonex-middleware/dao"
     "bonex-middleware/log"
     "bonex-middleware/services/api"
     "flag"
     "os"
+    "bonex-middleware/services/faucet"
 )
 
 func main() {
     configFile := flag.String("conf", "./config.json", "Pathname to config file")
+    //var DisableFaucet bool
+    //flag.BoolVar(&DisableFaucet, "disable-faucet", false, "Publish withdraws")
 
     flag.Parse()
 
@@ -24,14 +29,26 @@ func main() {
     log.Init(cfg.LogLevel)
 
     // Init dao
-    d, err := dao.New(cfg, log.GetInstance())
+    dbDao, err := mdao.NewMysql(cfg, log.GetInstance())
     if err != nil {
-        log.Fatalf("Cannot init DAO: %s", err.Error())
+        log.Fatalf("Cannot init DB DAO: %s", err.Error())
     }
 
-    apiModule := api.New(d, cfg)
+    redisDao, err := rdao.NewRedis(cfg)
+    if err != nil {
+        log.Fatalf("Cannot init Redis DAO: %s", err.Error())
+    }
 
-    runModules(apiModule)
+    d := dao.New(redisDao, dbDao)
+
+    s := faucet.NewStellar(cfg)
+    faucetModule := faucet.New(d, cfg, s)
+
+    apiModule := api.New(d, cfg, faucetModule)
+
+
+
+    runModules(apiModule, faucetModule)
 
     log.Infof("Exiting")
     os.Exit(0)

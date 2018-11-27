@@ -2,7 +2,7 @@ package response
 
 import (
 	"encoding/json"
-	"bonex-middleware/models"
+	"bonex-middleware/types"
 	"net/http"
 )
 
@@ -20,11 +20,11 @@ func Json(w http.ResponseWriter, data interface{}) {
 
 // JsonError writes to ResponseWriter error
 func JsonError(w http.ResponseWriter, err error) {
-	var e *models.Error
+	var e *types.Error
 	var ok bool
 
-	if e, ok = err.(*models.Error); !ok {
-		e = models.FromError(err)
+	if e, ok = err.(*types.Error); !ok {
+		e = types.FromError(err)
 	}
 
 	js, _ := json.Marshal(e.ToMap())

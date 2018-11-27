@@ -13,6 +13,10 @@ type (
 		Api      ApiConfig
 		LogLevel log.LogLevel
 		Mysql    MysqlConfig
+		Redis    RedisConfig
+		Faucet   FaucetConfig
+
+		HorizonClientURL string
 	}
 
 	baseConfig interface {

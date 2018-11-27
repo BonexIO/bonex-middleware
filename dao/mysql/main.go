@@ -18,7 +18,7 @@ type mysqlDAOTx struct {
 	tx *sqlx.Tx
 }
 
-func New(c *config.Config, l driver.Logger) (dao.DAO, error) {
+func NewMysql(c *config.Config, l driver.Logger) (dao.DbDAO, error) {
 	m, err := driver.CreateConnection(&c.Mysql, l)
 	if err != nil {
 		return nil, err

@@ -13,6 +13,7 @@ import (
     "github.com/urfave/negroni"
     "net/http"
     "time"
+    "bonex-middleware/services/faucet"
 )
 
 // API serves the end users requests.
@@ -21,6 +22,7 @@ type api struct {
     config *config.Config
     server *http.Server
     cache  *cache.Cache
+    faucet *faucet.Faucet
 }
 
 const (
@@ -29,7 +31,7 @@ const (
 
 // NewAPI initializes a new instance of API with needed fields, but doesn't start listening,
 // nor creates the router.
-func New(d dao.DAO, cfg *config.Config) *api {
+func New(d dao.DAO, cfg *config.Config, f *faucet.Faucet) *api {
     // Create a cache with a default expiration time of 5 minutes, and which
     // purges expired items every 10 minutes
     c := cache.New(1*time.Minute, 10*time.Minute)
@@ -38,6 +40,7 @@ func New(d dao.DAO, cfg *config.Config) *api {
         dao:    d,
         config: cfg,
         cache:  c,
+        faucet: f,
     }
 
     return api
@@ -79,6 +82,8 @@ func (this *api) Run() error {
 
         {"/subscriptions/{address}", "GET", this.getSubscriptions, nil},
         {"/subscribers/{address}", "GET", this.getSubscribers, nil},
+
+        {"/faucet/request", "GET", this.requestMoney, nil},
     })
 
     this.server = &http.Server{Addr: fmt.Sprintf(":%d", this.config.Api.Port), Handler: r}
@@ -86,7 +91,7 @@ func (this *api) Run() error {
     log.Infof("Listening on port %d", this.config.Api.Port)
     err := this.server.ListenAndServe()
     if err != nil {
-        return fmt.Errorf("Cannot run API service: %s", err.Error())
+        return fmt.Errorf("cannot run API service: %s", err.Error())
     }
 
     return nil

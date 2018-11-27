@@ -1,15 +1,15 @@
 package api
 
 import (
-    dmodels "bonex-middleware/dao/models"
+    "bonex-middleware/dao/models"
     "bonex-middleware/log"
-    "bonex-middleware/models"
     "bonex-middleware/services/api/response"
     "encoding/base64"
     "encoding/json"
     "github.com/gorilla/mux"
     "io/ioutil"
     "net/http"
+    "bonex-middleware/types"
 )
 
 const addressLen = 56
@@ -19,19 +19,19 @@ func (this *api) getMerchant(w http.ResponseWriter, r *http.Request) {
     params := mux.Vars(r)
     a := params["address"]
     if len(a) != addressLen {
-        response.JsonError(w, models.NewError(models.ErrBadParam, "address"))
+        response.JsonError(w, types.NewError(types.ErrBadParam, "address"))
         return
     }
 
     merchant, err := this.dao.GetMerchantByPubkeyOrNil(a, nil)
     if err != nil {
         log.Errorf("GetMerchantByPubkey: %s", err.Error())
-        response.JsonError(w, models.NewError(models.ErrService))
+        response.JsonError(w, types.NewError(types.ErrService))
         return
     }
 
     if merchant == nil {
-        response.JsonError(w, models.NewError(models.ErrNotFound))
+        response.JsonError(w, types.NewError(types.ErrNotFound))
         return
     }
 
@@ -47,7 +47,7 @@ func (this *api) listMerchants(w http.ResponseWriter, r *http.Request) {
     merchants, err := this.dao.GetMerchants()
     if err != nil {
         log.Errorf("GetMerchantByPubkey: %s", err.Error())
-        response.JsonError(w, models.NewError(models.ErrService))
+        response.JsonError(w, types.NewError(types.ErrService))
         return
     }
 
@@ -78,57 +78,57 @@ func (this *api) createMerchant(w http.ResponseWriter, r *http.Request) {
     var params reqParams
     err := json.NewDecoder(r.Body).Decode(&params)
     if err != nil {
-        response.JsonError(w, models.NewError(models.ErrBadRequest))
+        response.JsonError(w, types.NewError(types.ErrBadRequest))
         return
     }
 
     if params.Title == "" {
-        response.JsonError(w, models.NewError(models.ErrBadParam, "title"))
+        response.JsonError(w, types.NewError(types.ErrBadParam, "title"))
         return
     }
 
     if len(params.Pubkey) != addressLen {
-        response.JsonError(w, models.NewError(models.ErrBadParam, "pubkey"))
+        response.JsonError(w, types.NewError(types.ErrBadParam, "pubkey"))
         return
     }
 
     if params.AssetCode == "" {
-        response.JsonError(w, models.NewError(models.ErrBadParam, "asset_code"))
+        response.JsonError(w, types.NewError(types.ErrBadParam, "asset_code"))
         return
     }
 
     if params.Logo == "" {
-        response.JsonError(w, models.NewError(models.ErrBadParam, "logo"))
+        response.JsonError(w, types.NewError(types.ErrBadParam, "logo"))
         return
     }
 
     tmpfile, err := ioutil.TempFile("/opt/images", "logo")
     if err != nil {
         log.Errorf("Cannot create temp file: %s", err.Error())
-        response.JsonError(w, models.NewError(models.ErrService))
+        response.JsonError(w, types.NewError(types.ErrService))
         return
     }
 
     decodedLogo, err := base64.StdEncoding.DecodeString(params.Logo)
     if err != nil {
         log.Errorf("Cannot DecodeString: %s", err.Error())
-        response.JsonError(w, models.NewError(models.ErrService))
+        response.JsonError(w, types.NewError(types.ErrService))
         return
     }
 
     if _, err := tmpfile.Write(decodedLogo); err != nil {
         log.Errorf("Cannot write temp file: %s", err.Error())
-        response.JsonError(w, models.NewError(models.ErrService))
+        response.JsonError(w, types.NewError(types.ErrService))
         return
     }
 
     if err := tmpfile.Close(); err != nil {
         log.Errorf("Cannot close temp file: %s", err.Error())
-        response.JsonError(w, models.NewError(models.ErrService))
+        response.JsonError(w, types.NewError(types.ErrService))
         return
     }
 
-    merchant := &dmodels.Merchant{
+    merchant := &models.Merchant{
         Title:     params.Title,
         Pubkey:    params.Pubkey,
         AssetCode: params.AssetCode,
@@ -138,7 +138,7 @@ func (this *api) createMerchant(w http.ResponseWriter, r *http.Request) {
     err = this.dao.CreateMerchant(merchant, nil)
     if err != nil {
         log.Errorf("CreateMerchant: %s", err.Error())
-        response.JsonError(w, models.NewError(models.ErrService))
+        response.JsonError(w, types.NewError(types.ErrService))
         return
     }
 

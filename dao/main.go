@@ -2,6 +2,8 @@ package dao
 
 import (
     "bonex-middleware/dao/models"
+    "bonex-middleware/types"
+    "github.com/wedancedalot/decimal"
 )
 
 type DAOTx interface {
@@ -10,6 +12,11 @@ type DAOTx interface {
 }
 
 type DAO interface {
+    DbDAO
+    RedisDAO
+}
+
+type DbDAO interface {
     BeginTx() (DAOTx, error)
 
     // Merchants
@@ -25,4 +32,22 @@ type DAO interface {
 
     GetSubscriptions(accountId uint64) ([]*models.Merchant, error)
     GetSubscribers(merchantId uint64) ([]*models.Account, error)
+}
+
+type RedisDAO interface {
+    SetAccountVolume(ipAddress string, volume decimal.Decimal, ttl int64) error
+    GetAccountVolume(ipAddress string) (decimal.Decimal, error)
+
+    AddToQueue(qi *types.QueueItem) error
+    PopFromQueue() (*types.QueueItem, error)
+}
+
+func New(redisDAO RedisDAO, dbDAO DbDAO) DAO {
+    return &struct {
+        RedisDAO
+        DbDAO
+    }{
+        redisDAO,
+        dbDAO,
+    }
 }

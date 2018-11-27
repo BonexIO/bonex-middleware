@@ -3,7 +3,7 @@
   "Api": {
     "Port": 9000,
     "AllowedOrigins": [
-      "http://localhost:8081",
+      "http://localhost:8081"
     ]
   },
   "Mysql": {
@@ -13,5 +13,10 @@
     "Password": "root",
     "Database": "bonex-middleware",
     "DebugMode": true
+  },
+  "HorizonClientURL": "http://46.4.114.130:8000/",
+  "Faucet": {
+    "MaxAllowed24HoursValue": "100",
+    "RunEverySeconds": 10
   }
 }
