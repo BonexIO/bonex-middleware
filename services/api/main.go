@@ -83,7 +83,7 @@ func (this *api) Run() error {
         {"/subscriptions/{address}", "GET", this.getSubscriptions, nil},
         {"/subscribers/{address}", "GET", this.getSubscribers, nil},
 
-        {"/faucet/request", "POST", this.requestMoney, nil},
+        {"/faucet/{address}", "GET", this.requestMoney, nil},
     })
 
     this.server = &http.Server{Addr: fmt.Sprintf(":%d", this.config.Api.Port), Handler: r}

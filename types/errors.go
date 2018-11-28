@@ -21,6 +21,7 @@ const (
 	ErrBalanceNotEnough ErrorCode = "ERR_BALANCE_NOT_ENOUGH"
 	ErrBadAuth          ErrorCode = "ERR_BAD_AUTH"
 	ErrBadSignature     ErrorCode = "ERR_BAD_SIGNATURE"
+	ErrLimitReached     ErrorCode = "ERR_LIMIT_REACHED"
 )
 
 type (

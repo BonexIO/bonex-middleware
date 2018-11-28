@@ -4,28 +4,40 @@ import (
     "bonex-middleware/log"
     "bonex-middleware/services/api/response"
     "net/http"
-    "encoding/json"
     "bonex-middleware/types"
     "github.com/Nargott/goutils"
-    "fmt"
+    "github.com/gorilla/mux"
+    "github.com/wedancedalot/decimal"
 )
 
 func (this *api) requestMoney(w http.ResponseWriter, r *http.Request) {
-    var qi types.QueueItem
+    var (
+        err error
+        qi types.QueueItem
+    )
 
-    err := json.NewDecoder(r.Body).Decode(&qi)
-    if err != nil {
-        log.Warn(err.Error())
-        response.JsonError(w, types.NewError(types.ErrBadRequest))
+    params := mux.Vars(r)
+    qi.Address = params["address"]
+    if len(qi.Address) != addressLen {
+        response.JsonError(w, types.NewError(types.ErrBadParam, "address"))
         return
     }
 
-    fmt.Println(qi)
+    amountStr := r.URL.Query().Get("amount")
+    if amountStr == "" {
+        qi.Amount = this.config.Faucet.MaxAllowed24HoursValue
+    } else {
+        qi.Amount, err = decimal.NewFromString(amountStr)
+        if err != nil {
+            response.JsonError(w, types.NewError(types.ErrBadParam, "amount"))
+            return
+        }
+    }
 
     err = this.faucet.AddToQueue(&qi, goutils.GetClearIpAddress(r))
     if err != nil {
         log.Error(err.Error())
-        response.JsonError(w, types.NewError(types.ErrService))
+        response.JsonError(w, err)
         return
     }
 
