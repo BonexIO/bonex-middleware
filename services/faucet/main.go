@@ -55,6 +55,9 @@ func (this *Faucet) PromtKey() error {
 	}
 
 	err = this.sender.SetPrivateKey(string(privKeyBytes))
+	if err != nil {
+		return err
+	}
 	fmt.Println(" ")
 
 	return nil
