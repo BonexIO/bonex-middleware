@@ -1,31 +1,21 @@
 package types
 
 import (
-	"fmt"
 	"github.com/wedancedalot/decimal"
 )
 
 type QueueItem struct {
-	Address string `json:"address"`
-	Amount  string `json:"amount"`
+	Address string
+	Amount  decimal.Decimal
 }
 
 func (this *QueueItem) Validate() error {
 	if this.Address == "" {
-		return fmt.Errorf("no address provided")
+		return NewError(ErrBadParam, "address")
 	}
 
-	if this.Amount == "" {
-		return fmt.Errorf("no amount provided")
-	}
-
-	amount, err := decimal.NewFromString(this.Amount)
-	if err != nil {
-		return fmt.Errorf("bad amount format (not a decimal value): %s", err.Error())
-	}
-
-	if amount.LessThanOrEqual(decimal.Zero) {
-		return fmt.Errorf("too low amount %s", amount.String())
+	if this.Amount.LessThanOrEqual(decimal.Zero) {
+		return NewError(ErrBadParam, "amount")
 	}
 
 	return nil
