@@ -3,11 +3,19 @@
 
 [[projects]]
   branch = "master"
-  digest = "1:500df76b0231b6a28117b999d153a2ab152aa63d6f3bc8ea06504e1c307ed920"
+  digest = "1:62d36bcd365c228989c8cf2f8fb26e5b476d9bf7824b9039aa75b86762adb33f"
   name = "github.com/Nargott/goutils"
   packages = ["."]
   pruneopts = "UT"
-  revision = "0aa7d50070ceef893c5ef972a7fee1947b3d51c7"
+  revision = "c48ec3c30d03e989b3970e656c5b6e3e0438ab4f"
+
+[[projects]]
+  branch = "master"
+  digest = "1:d60a6983f605420d17520ad3e206319a252989044f4ac580799575c850d4eb41"
+  name = "github.com/NaySoftware/go-fcm"
+  packages = ["."]
+  pruneopts = "UT"
+  revision = "28fff9381d17f35619309c7a5ada41d26030d976"
 
 [[projects]]
   branch = "master"
@@ -225,6 +233,14 @@
   revision = "ba2c6a7295c59448dbc195cef2f41df5163b3892"
 
 [[projects]]
+  digest = "1:274f67cb6fed9588ea2521ecdac05a6d62a8c51c074c1fccc6a49a40ba80e925"
+  name = "github.com/satori/go.uuid"
+  packages = ["."]
+  pruneopts = "UT"
+  revision = "f58768cc1a7a7e77a3bd49e98cdd21419399b6a3"
+  version = "v1.2.0"
+
+[[projects]]
   digest = "1:54bd573538ca13ccf85d18c99249d934f17957f17263256b42565a11c854c1de"
   name = "github.com/segmentio/go-loggly"
   packages = ["."]
@@ -267,7 +283,7 @@
     "xdr",
   ]
   pruneopts = "UT"
-  revision = "c235e807644d76fc15c8328df4cbb49a25b990d0"
+  revision = "c2d8566850ab928e4ab70cf8fc79b0af45734dfd"
 
 [[projects]]
   branch = "master"
@@ -314,11 +330,11 @@
 
 [[projects]]
   branch = "v1"
-  digest = "1:f65a17da399832b3c3f04a0ada90c3c714b39cbf0af06162bc84f4010398bf5e"
+  digest = "1:cd5e68edd2bf48e7395d6df5e3dca9daae476ed5e3e57c766dd1cc4c8bce43c3"
   name = "github.com/wedancedalot/squirrel"
   packages = ["."]
   pruneopts = "UT"
-  revision = "6339661059aa086a7403d6c261348b64e9967b2c"
+  revision = "8a2fefa676621b3553accfe22e12fb8336a7782c"
 
 [[projects]]
   branch = "master"
@@ -326,7 +342,7 @@
   name = "golang.org/x/crypto"
   packages = ["ssh/terminal"]
   pruneopts = "UT"
-  revision = "eb0de9b17e854e9b1ccd9963efafc79862359959"
+  revision = "505ab145d0a99da450461ae2c1a9f6cd10d1f447"
 
 [[projects]]
   branch = "master"
@@ -339,18 +355,18 @@
     "publicsuffix",
   ]
   pruneopts = "UT"
-  revision = "adae6a3d119ae4890b46832a2e88a95adc62b8e7"
+  revision = "610586996380ceef02dd726cc09df7e00a3f8e56"
 
 [[projects]]
   branch = "master"
-  digest = "1:0c7cb58af944f9690af91474a75371eecfe54c1ce3771a8dc08924430ee785d3"
+  digest = "1:b16098ed46629e6d6f66d37153a36b6f664c522a9228f12a5a36f3d9b8a93713"
   name = "golang.org/x/sys"
   packages = [
     "unix",
     "windows",
   ]
   pruneopts = "UT"
-  revision = "4ed8d59d0b35e1e29334a206d1b3f38b1e5dfb31"
+  revision = "ad97f365e15054527b467150f898ec66d7f81e14"
 
 [[projects]]
   digest = "1:a2ab62866c75542dd18d2b069fec854577a20211d7c0ea6ae746072a1dccdd18"
@@ -396,6 +412,7 @@
   analyzer-version = 1
   input-imports = [
     "github.com/Nargott/goutils",
+    "github.com/NaySoftware/go-fcm",
     "github.com/fatih/color",
     "github.com/garyburd/redigo/redis",
     "github.com/go-sql-driver/mysql",
@@ -407,6 +424,7 @@
     "github.com/patrickmn/go-cache",
     "github.com/rs/cors",
     "github.com/rubenv/sql-migrate",
+    "github.com/satori/go.uuid",
     "github.com/stellar/go/build",
     "github.com/stellar/go/clients/horizon",
     "github.com/stellar/go/keypair",

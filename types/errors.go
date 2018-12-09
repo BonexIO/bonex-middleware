@@ -22,6 +22,7 @@ const (
 	ErrBadAuth          ErrorCode = "ERR_BAD_AUTH"
 	ErrBadSignature     ErrorCode = "ERR_BAD_SIGNATURE"
 	ErrLimitReached     ErrorCode = "ERR_LIMIT_REACHED"
+	ErrBadStatus        ErrorCode = "ERR_BAD_STATUS"
 )
 
 type (

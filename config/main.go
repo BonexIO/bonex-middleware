@@ -1,9 +1,9 @@
 package config
 
 import (
+	"bonex-middleware/log"
 	"encoding/json"
 	"fmt"
-	"bonex-middleware/log"
 	"os"
 	"reflect"
 )
@@ -15,8 +15,9 @@ type (
 		Mysql    MysqlConfig
 		Redis    RedisConfig
 		Faucet   FaucetConfig
+		Firebase FirebaseConfig
 
-		HorizonClientURL string
+		HorizonClientURL  string
 		NetworkPassphrase string
 	}
 

@@ -23,5 +23,8 @@
   "Faucet": {
     "MaxAllowed24HoursValue": "100",
     "RunEverySeconds": 10
+  },
+  "Firebase":{
+    "ServerKey": "YOUR-KEY"
   }
 }
