@@ -3,7 +3,7 @@ package dao
 import (
 	"bonex-middleware/dao/models"
 	"bonex-middleware/types"
-	"github.com/satori/go.uuid"
+	"github.com/stellar/go/clients/horizon"
 	"github.com/wedancedalot/decimal"
 )
 
@@ -17,6 +17,7 @@ type (
 		DbDAO
 		RedisDAO
 		FirebaseDAO
+		BlockchainDAO
 	}
 
 	DbDAO interface {
@@ -39,7 +40,9 @@ type (
 		CreateMessage(m *models.Message, tx DAOTx) error
 		UpdateMessage(m *models.Message, tx DAOTx) error
 		GetMessageById(id uint64, tx DAOTx) (*models.Message, error)
-		GetMessageByUuid(mUuid uuid.UUID) (*models.Message, error)
+		GetMessageByTxHash(txHash string) (*models.Message, error)
+		GetMessages(f *types.MessageFilters) ([]*models.Message, error)
+		DeleteMessage(m *models.Message, tx DAOTx) error
 	}
 
 	RedisDAO interface {
@@ -51,18 +54,28 @@ type (
 	}
 
 	FirebaseDAO interface {
-		SendMessage(msg types.Message) error
+		SendMessage(msg *models.Message) error
+	}
+
+	BlockchainDAO interface {
+		BlockchainName() string
+		SendMoney(string, decimal.Decimal) error
+		SetPrivateKey(string) error
+		ValidateAddress(string) error
+		GetTransaction(txHash string) (*horizon.Transaction, error)
 	}
 )
 
-func New(redisDAO RedisDAO, dbDAO DbDAO, fDAO FirebaseDAO) DAO {
+func New(redisDAO RedisDAO, dbDAO DbDAO, fDAO FirebaseDAO, bDAO BlockchainDAO) DAO {
 	return &struct {
 		RedisDAO
 		DbDAO
 		FirebaseDAO
+		BlockchainDAO
 	}{
-		RedisDAO:    redisDAO,
-		DbDAO:       dbDAO,
-		FirebaseDAO: fDAO,
+		RedisDAO:      redisDAO,
+		DbDAO:         dbDAO,
+		FirebaseDAO:   fDAO,
+		BlockchainDAO: bDAO,
 	}
 }

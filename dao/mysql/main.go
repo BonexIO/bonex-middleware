@@ -1,11 +1,11 @@
 package mysql
 
 import (
-	"fmt"
-	"github.com/jmoiron/sqlx"
 	"bonex-middleware/config"
 	"bonex-middleware/dao"
 	"bonex-middleware/dao/mysql/driver"
+	"fmt"
+	"github.com/jmoiron/sqlx"
 )
 
 const migrationsDir = "./dao/mysql/migrations"
@@ -43,7 +43,7 @@ func (this *mysqlDAO) BeginTx() (dao.DAOTx, error) {
 
 func (this *mysqlDAOTx) CommitTx() error {
 	if this.tx == nil {
-		return fmt.Errorf("Tx not initialized")
+		return fmt.Errorf("tx not initialized")
 	}
 
 	return this.tx.Commit()

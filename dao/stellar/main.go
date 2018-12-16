@@ -1,40 +1,42 @@
-package faucet
+package stellar
 
 import (
-	"github.com/wedancedalot/decimal"
-	"github.com/stellar/go/clients/horizon"
-	"net/http"
 	"bonex-middleware/config"
+	"bonex-middleware/dao"
+	"bonex-middleware/log"
 	"fmt"
-	"github.com/stellar/go/keypair"
 	"github.com/fatih/color"
 	b "github.com/stellar/go/build"
-	"bonex-middleware/log"
+	"github.com/stellar/go/clients/horizon"
+	"github.com/stellar/go/keypair"
+	"github.com/wedancedalot/decimal"
+	"net/http"
 )
 
 type Stellar struct {
-	privateKey    string
-	client *horizon.Client
-	network b.Network
+	privateKey string
+	client     *horizon.Client
+	network    b.Network
 }
 
-func NewStellar(cfg *config.Config) Blockchain {
+func NewStellar(cfg *config.Config) dao.BlockchainDAO {
 	return &Stellar{
 		client: &horizon.Client{
 			URL:  cfg.HorizonClientURL,
 			HTTP: http.DefaultClient,
 		},
-		network: b.Network{
-			cfg.NetworkPassphrase,
-		},
+		network: b.Network{cfg.NetworkPassphrase},
 	}
 }
 
-func (this *Stellar) Title() string {
+func (this *Stellar) BlockchainName() string {
 	return "Stellar"
 }
 
 func (this *Stellar) SendMoney(toAddress string, amount decimal.Decimal) error {
+	if this.privateKey == "" {
+		return fmt.Errorf("private key is not set")
+	}
 	log.Infof("Sending %s to %s", amount.String(), toAddress)
 
 	tx, err := b.Transaction(
@@ -71,12 +73,11 @@ func (this *Stellar) SendMoney(toAddress string, amount decimal.Decimal) error {
 }
 
 func (this *Stellar) SetPrivateKey(pk string) error {
-	//var p [32]byte
-	//copy(p[:], privKeyBytes[0:32])
-	//kp, err := keypair.FromRawSeed(p)
-	this.privateKey = pk
+	if this.privateKey != "" {
+		return fmt.Errorf("private key is set already")
+	}
 
-	kp, err := keypair.Parse(this.privateKey)
+	kp, err := keypair.Parse(pk)
 	if err != nil {
 		return err
 	}
@@ -86,6 +87,8 @@ func (this *Stellar) SetPrivateKey(pk string) error {
 	}
 
 	fmt.Printf("Emission address derrived from priv key is: %s", color.New(color.Bold, color.FgGreen).SprintFunc()(kp.Address()))
+
+	this.privateKey = pk
 
 	return nil
 }
@@ -101,4 +104,13 @@ func (this *Stellar) ValidateAddress(addr string) error {
 	}
 
 	return nil
+}
+
+func (this *Stellar) GetTransaction(txHash string) (*horizon.Transaction, error) {
+	tx, err := this.client.LoadTransaction(txHash)
+	if err != nil {
+		return nil, err
+	}
+
+	return &tx, nil
 }

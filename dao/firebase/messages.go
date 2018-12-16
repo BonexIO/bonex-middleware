@@ -1,22 +1,15 @@
 package firebase
 
 import (
-	"bonex-middleware/types"
+	"bonex-middleware/dao/models"
 	"fmt"
-	"goutils"
 )
 
-func (this *firebaseDAO) SendMessage(msg types.Message) error {
-	pUuid, err := goutils.UUIDToBase64(msg.Uuid)
-	if err != nil {
-		return err
-	}
-
+func (this *firebaseDAO) SendMessage(msg *models.Message) error {
 	data := map[string]string{
-		"uuid":        msg.Uuid,
-		"uuid_packed": pUuid,
-		"body":        msg.Body,
-		"sender":      msg.SenderPubkey,
+		"tx_hash": msg.TxHash,
+		"body":    msg.Body,
+		"sender":  msg.SenderPubkey.String,
 	}
 
 	this.client.NewFcmMsgTo(msg.ReceiverPubkey, data)

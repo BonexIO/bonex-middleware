@@ -6,9 +6,11 @@ import (
 	fdao "bonex-middleware/dao/firebase"
 	mdao "bonex-middleware/dao/mysql"
 	rdao "bonex-middleware/dao/redis"
+	bdao "bonex-middleware/dao/stellar"
 	"bonex-middleware/log"
 	"bonex-middleware/services/api"
 	"bonex-middleware/services/faucet"
+	"bonex-middleware/services/messaging"
 	"flag"
 	"os"
 )
@@ -45,18 +47,20 @@ func main() {
 		log.Fatalf("Cannot init Firebase DAO: %s", err.Error())
 	}
 
-	d := dao.New(redisDao, dbDao, fbDao)
+	bDao := bdao.NewStellar(cfg)
 
-	s := faucet.NewStellar(cfg)
-	faucetModule := faucet.New(d, cfg, s)
+	d := dao.New(redisDao, dbDao, fbDao, bDao)
+
+	faucetModule := faucet.New(d, cfg)
 	err = faucetModule.PromtKey()
 	if err != nil {
 		log.Fatalf("Cannot promt necessary keys to run faucet: %s", err.Error())
 	}
 
 	apiModule := api.New(d, cfg, faucetModule)
+	msgModule := messaging.New(d, cfg)
 
-	runModules(apiModule, faucetModule)
+	runModules(apiModule, faucetModule, msgModule)
 
 	log.Infof("Exiting")
 	os.Exit(0)

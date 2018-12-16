@@ -3,38 +3,28 @@ package faucet
 import (
 	"bonex-middleware/config"
 	"bonex-middleware/dao"
+	"bonex-middleware/log"
+	"bonex-middleware/types"
 	"context"
 	"fmt"
-	"syscall"
-	"golang.org/x/crypto/ssh/terminal"
 	"github.com/jasonlvhit/gocron"
-	"bonex-middleware/log"
-	"github.com/wedancedalot/decimal"
-	"bonex-middleware/types"
+	"golang.org/x/crypto/ssh/terminal"
+	"syscall"
 )
 
 type (
 	Faucet struct {
 		dao    dao.DAO
 		config *config.Config
-		sender Blockchain
-	}
-
-	Blockchain interface {
-		Title() string
-		SendMoney(string, decimal.Decimal) error
-		SetPrivateKey(string) error
-		ValidateAddress(string) error
 	}
 )
 
 const GreyListTTL = 24 * 60 * 60 //seconds
 
-func New(d dao.DAO, cfg *config.Config, s Blockchain) *Faucet {
+func New(d dao.DAO, cfg *config.Config) *Faucet {
 	return &Faucet{
-		dao: d,
+		dao:    d,
 		config: cfg,
-		sender: s,
 	}
 }
 
@@ -54,7 +44,7 @@ func (this *Faucet) PromtKey() error {
 		return err
 	}
 
-	err = this.sender.SetPrivateKey(string(privKeyBytes))
+	err = this.dao.SetPrivateKey(string(privKeyBytes))
 	if err != nil {
 		return err
 	}
@@ -82,13 +72,13 @@ func (this *Faucet) Do() {
 		return
 	}
 
-	err = this.sender.ValidateAddress(req.Address)
+	err = this.dao.ValidateAddress(req.Address)
 	if err != nil {
 		log.Errorf("Invalid address provided: %s", err.Error())
 		return
 	}
 
-	err = this.sender.SendMoney(req.Address, req.Amount)
+	err = this.dao.SendMoney(req.Address, req.Amount)
 	if err != nil {
 		log.Errorf("Cannot SendMoney: %s", err.Error())
 		return
@@ -110,7 +100,7 @@ func (this *Faucet) AddToQueue(qi *types.QueueItem, ipAddress string) error {
 		return types.NewError(types.ErrBadParam, "amount")
 	}
 
-	if err := this.sender.ValidateAddress(qi.Address); err != nil {
+	if err := this.dao.ValidateAddress(qi.Address); err != nil {
 		log.Errorf("bad address format: %s", err.Error())
 		return types.NewError(types.ErrBadParam, "address")
 	}

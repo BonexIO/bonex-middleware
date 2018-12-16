@@ -14,7 +14,7 @@
     "Database": "bonex-middleware",
     "DebugMode": true
   },
-  "Redis" : {
+  "Redis": {
     "Host": "localhost",
     "Port": 6379
   },
@@ -24,7 +24,12 @@
     "MaxAllowed24HoursValue": "100",
     "RunEverySeconds": 10
   },
-  "Firebase":{
+  "Firebase": {
     "ServerKey": "YOUR-KEY"
+  },
+  "Messaging": {
+    "RunCleanerEveryHours": 2,
+    "RunRemoverEveryMinutes": 5,
+    "RunNotificatorEverySeconds": 30
   }
 }

@@ -10,12 +10,13 @@ import (
 
 type (
 	Config struct {
-		Api      ApiConfig
-		LogLevel log.LogLevel
-		Mysql    MysqlConfig
-		Redis    RedisConfig
-		Faucet   FaucetConfig
-		Firebase FirebaseConfig
+		Api       ApiConfig
+		LogLevel  log.LogLevel
+		Mysql     MysqlConfig
+		Redis     RedisConfig
+		Faucet    FaucetConfig
+		Firebase  FirebaseConfig
+		Messaging MessagingConfig
 
 		HorizonClientURL  string
 		NetworkPassphrase string

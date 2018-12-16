@@ -2,6 +2,7 @@ package api
 
 import (
 	"bonex-middleware/dao/models"
+	mysqld "bonex-middleware/dao/mysql/driver"
 	"bonex-middleware/log"
 	"bonex-middleware/services/api/response"
 	"bonex-middleware/types"
@@ -9,25 +10,10 @@ import (
 	"encoding/json"
 	"github.com/go-sql-driver/mysql"
 	"github.com/gorilla/mux"
-	"github.com/satori/go.uuid"
 	"goutils"
 	"net/http"
 	"time"
 )
-
-func (this *api) parseMessageUuid(mUuid string) (uuid.UUID, error) {
-	u, err := uuid.FromString(mUuid)
-	if err != nil {
-		// try to parse as packed uuid
-		sUuid, err := goutils.Base64ToUuid(mUuid)
-		if err != nil {
-			return uuid.Nil, err
-		}
-		return uuid.FromStringOrNil(sUuid), nil
-	}
-
-	return u, nil
-}
 
 func (this *api) messageSend(w http.ResponseWriter, r *http.Request) {
 	var m types.Message
@@ -38,26 +24,34 @@ func (this *api) messageSend(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	mUuid, err := this.parseMessageUuid(m.Uuid)
-	if err != nil {
-		log.Warn(err.Error())
-		response.JsonError(w, types.NewError(types.ErrBadParam, "uuid"))
+	if m.TxHash == "" {
+		response.JsonError(w, types.NewError(types.ErrBadParam, "tx_hash"))
+		return
+	}
+
+	if m.ReceiverPubkey == "" {
+		response.JsonError(w, types.NewError(types.ErrBadParam, "receiver_pubkey"))
+		return
+	}
+
+	if m.Body == "" {
+		response.JsonError(w, types.NewError(types.ErrBadParam, "body"))
 		return
 	}
 
 	msg := models.Message{
-		Uuid:           mUuid,
+		TxHash:         m.TxHash,
+		Body:           m.Body,
 		SenderPubkey:   goutils.ToNullString(m.SenderPubkey),
 		ReceiverPubkey: m.ReceiverPubkey,
-		TxHash:         goutils.ToNullString(m.TxHash),
 		Status:         models.MessageStatusCreated,
 	}
 
 	err = this.dao.CreateMessage(&msg, nil)
 	if err != nil {
-		if err == sql.ErrNoRows {
+		if err == mysqld.ErrDuplicate {
 			log.Warn(err.Error())
-			response.JsonError(w, types.NewError(types.ErrAlreadyExists, msg.Uuid.String()))
+			response.JsonError(w, types.NewError(types.ErrAlreadyExists, msg.TxHash))
 			return
 		}
 		log.Errorf("CreateMessage error: %s", err.Error())
@@ -65,38 +59,33 @@ func (this *api) messageSend(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = this.dao.SendMessage(m)
-	if err != nil {
-		log.Errorf("SendMessage error: %s", err.Error())
-		response.JsonError(w, types.NewError(types.ErrService))
-		return
-	}
+	//err = this.dao.SendMessage(m)
+	//if err != nil {
+	//	log.Errorf("SendMessage error: %s", err.Error())
+	//	response.JsonError(w, types.NewError(types.ErrService))
+	//	return
+	//}
 
 	response.Json(w, map[string]interface{}{
-		"uuid":   msg.Uuid.String(),
-		"status": msg.Status,
+		"tx_hash": msg.TxHash,
+		"status":  msg.Status,
 	})
 	return
 }
 
-func (this *api) messageReceived(w http.ResponseWriter, r *http.Request) {
+func (this *api) getMessage(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
-	mUuid, err := this.parseMessageUuid(params["uuid"])
-	if err != nil {
-		log.Warn(err.Error())
-		response.JsonError(w, types.NewError(types.ErrBadParam, "uuid"))
-		return
-	}
+	txHash := params["tx_hash"]
 
 	//load message by uuid
-	msg, err := this.dao.GetMessageByUuid(mUuid)
+	msg, err := this.dao.GetMessageByTxHash(txHash)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			log.Warn(err.Error())
-			response.JsonError(w, types.NewError(types.ErrNotFound, "uuid"))
+			response.JsonError(w, types.NewError(types.ErrNotFound, "tx_hash"))
 			return
 		}
-		log.Errorf("GetMessageByUuid error: %s", err.Error())
+		log.Errorf("GetMessageByTxHash error: %s", err.Error())
 		response.JsonError(w, types.NewError(types.ErrService))
 		return
 	}
@@ -105,7 +94,7 @@ func (this *api) messageReceived(w http.ResponseWriter, r *http.Request) {
 	switch msg.Status {
 	case models.MessageStatusError:
 		fallthrough
-	case models.MessageStatusReceived:
+	case models.MessageStatusReceived: //TODO may be return this message?
 		response.JsonError(w, types.NewError(types.ErrBadStatus, string(msg.Status)))
 		return
 	}
@@ -146,8 +135,9 @@ func (this *api) messageReceived(w http.ResponseWriter, r *http.Request) {
 	}
 
 	response.Json(w, map[string]interface{}{
-		"uuid":   msg.Uuid.String(),
-		"status": msg.Status,
+		"tx_hash": msg.TxHash,
+		"body":    msg.Body,
+		"status":  msg.Status,
 	})
 	return
 }
