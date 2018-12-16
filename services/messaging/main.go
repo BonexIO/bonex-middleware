@@ -135,7 +135,7 @@ func (this *Messaging) Clean() {
 	ms, err := this.dao.GetMessages(&types.MessageFilters{
 		//TODO: may be clean all possible messages
 		Statuses: []models.MessageStatus{models.MessageStatusCreated, models.MessageStatusWaitingForTx},
-		FromTime: &weekBefore,
+		ToTime:   &weekBefore,
 	})
 	if err != nil {
 		if err == sql.ErrNoRows {
