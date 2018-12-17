@@ -8,7 +8,7 @@ CREATE TABLE `messages` (
   `msg_status` enum('created','waiting_for_tx','notification_sent','received','error') COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'created',
   `msg_created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `msg_updated_at` timestamp NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
-  `msg_received_at` timestamp NULL DEFAULT NULL,
+  `msg_received_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 ALTER TABLE `messages`

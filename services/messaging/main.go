@@ -92,7 +92,7 @@ func (this *Messaging) Notificate() {
 			//no messages -- nothing to do
 			return
 		}
-		log.Errorf("cannot load messages to Notificate users: %s")
+		log.Errorf("cannot load messages to Notificate users: %s", err.Error())
 		return
 	}
 
@@ -174,6 +174,7 @@ func (this *Messaging) deleteMessages(ms []*models.Message) {
 	defer dbTx.RollbackTx()
 
 	for _, m := range ms {
+		log.Infof("Deleting message id %d with status %s", m.Id, m.Status)
 		err = this.dao.DeleteMessage(m, dbTx)
 		if err != nil {
 			log.Errorf("cannot DeleteMessage %d: %s", m.Id, err.Error())

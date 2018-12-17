@@ -85,8 +85,8 @@ func (this *api) Run() error {
 
 		{"/faucet/{address}", "GET", this.requestMoney, nil},
 
-		{"/message", "POST", this.messageSend, nil},
-		{"/message/{tx_hash}", "POST", this.getMessage, nil},
+		{"/messages", "POST", this.messageSend, nil},
+		{"/messages/{tx_hash}", "POST", this.getMessage, nil},
 	})
 
 	this.server = &http.Server{Addr: fmt.Sprintf(":%d", this.config.Api.Port), Handler: r}

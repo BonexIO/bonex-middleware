@@ -13,6 +13,7 @@ func (this *mysqlDAO) CreateMessage(m *models.Message, tx dao.DAOTx) error {
 
 	m.Id, err = this.mysql.Insert(sq.Insert(models.MessagesTable).SetMap(sq.Eq{
 		"msg_tx_hash":         m.TxHash,
+		"msg_body":            m.Body,
 		"msg_sender_pubkey":   m.SenderPubkey,
 		"msg_receiver_pubkey": m.ReceiverPubkey,
 		"msg_status":          m.Status,
@@ -84,15 +85,15 @@ func (this *mysqlDAO) GetMessages(f *types.MessageFilters) ([]*models.Message, e
 		}
 
 		if len(f.Statuses) > 0 {
-			q = q.Where(sq.Eq{"wit_status": f.Statuses})
+			q = q.Where(sq.Eq{"msg_status": f.Statuses})
 		}
 
 		if len(f.NotStatuses) > 0 {
-			q = q.Where(sq.NotEq{"wit_status": f.NotStatuses})
+			q = q.Where(sq.NotEq{"msg_status": f.NotStatuses})
 		}
 	}
 
-	err := this.mysql.Find(mLists, q)
+	err := this.mysql.Find(&mLists, q)
 
 	return mLists, err
 }

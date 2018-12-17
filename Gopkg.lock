@@ -3,11 +3,11 @@
 
 [[projects]]
   branch = "master"
-  digest = "1:62d36bcd365c228989c8cf2f8fb26e5b476d9bf7824b9039aa75b86762adb33f"
+  digest = "1:e873e537ef9a4d13de8979f08921d889f64c7298d08b62982dfc7f3b267aa463"
   name = "github.com/Nargott/goutils"
   packages = ["."]
   pruneopts = "UT"
-  revision = "c48ec3c30d03e989b3970e656c5b6e3e0438ab4f"
+  revision = "d38178e13f8d4b91ac8176d5f92b3357af9d20c8"
 
 [[projects]]
   branch = "master"
@@ -223,14 +223,14 @@
 
 [[projects]]
   branch = "master"
-  digest = "1:89cf776c0a621a34017c819b66b9e0f0bb076d3c5b9ca74763fb89570e140038"
+  digest = "1:adddeca6a627f69b0c34971dfc13292f334352d43ba0b9b121434ff92a2d04c1"
   name = "github.com/rubenv/sql-migrate"
   packages = [
     ".",
     "sqlparse",
   ]
   pruneopts = "UT"
-  revision = "ba2c6a7295c59448dbc195cef2f41df5163b3892"
+  revision = "5a8808c14925f69d2228981db113f672ad047e69"
 
 [[projects]]
   digest = "1:274f67cb6fed9588ea2521ecdac05a6d62a8c51c074c1fccc6a49a40ba80e925"
@@ -283,7 +283,7 @@
     "xdr",
   ]
   pruneopts = "UT"
-  revision = "c2d8566850ab928e4ab70cf8fc79b0af45734dfd"
+  revision = "1adee07661f2cdb26dffe569937263cbaa96b9f7"
 
 [[projects]]
   branch = "master"
@@ -355,18 +355,18 @@
     "publicsuffix",
   ]
   pruneopts = "UT"
-  revision = "610586996380ceef02dd726cc09df7e00a3f8e56"
+  revision = "e147a9138326bc0e9d4e179541ffd8af41cff8a9"
 
 [[projects]]
   branch = "master"
-  digest = "1:b16098ed46629e6d6f66d37153a36b6f664c522a9228f12a5a36f3d9b8a93713"
+  digest = "1:ba8cbf57cfd92d5f8592b4aca1a35d92c162363d32aeabd5b12555f8896635e7"
   name = "golang.org/x/sys"
   packages = [
     "unix",
     "windows",
   ]
   pruneopts = "UT"
-  revision = "ad97f365e15054527b467150f898ec66d7f81e14"
+  revision = "4d1cda033e0619309c606fc686de3adcf599539e"
 
 [[projects]]
   digest = "1:a2ab62866c75542dd18d2b069fec854577a20211d7c0ea6ae746072a1dccdd18"

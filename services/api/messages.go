@@ -10,7 +10,7 @@ import (
 	"encoding/json"
 	"github.com/go-sql-driver/mysql"
 	"github.com/gorilla/mux"
-	"goutils"
+	"github.com/Nargott/goutils"
 	"net/http"
 	"time"
 )
